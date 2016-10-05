@@ -4,120 +4,133 @@
     <title>MediaPortal</title>
 </head>
 <body>
-    <div id="mediaPortalConfigurationPage" data-role="page" class="page type-interior pluginConfigurationPage mediaPortalConfigurationPage">
+    <div id="mediaPortalConfigurationPage" data-role="page" class="page type-interior pluginConfigurationPage mediaPortalConfigurationPage" data-require="emby-button,emby-input,emby-select,emby-checkbox">
 
         <div data-role="content">
             <div class="content-primary">
                 <form id="mediaPortalConfigurationForm">
-                    <div id="connectionSection" data-role="collapsible" data-collapsed="false">
-                        <h2 id="connectionHeader">MP Connection and Authentication</h2>
-                        <div>
-                            <ul data-role="listview" class="ulForm">
-                                <li>
-                                    <label for="txtApiHostName">Host Name:</label>
-                                    <input id="txtApiHostName" name="txtApiHostName" />
-                                    <div class="fieldDescription">
-                                        The host name (address) of the MP Extended Service
-                                    </div>
-                                </li>
-                                <li>
-                                    <label for="txtApiPortNumber">Port Number:</label>
-                                    <input id="txtApiPortNumber" name="txtApiPortNumber" />
-                                    <div class="fieldDescription">
-                                        The port number of the MP Extended Service
-                                    </div>
-                                </li>
-                                <li>
-                                    <label for="chkRequiresAuthentication">Requires authentication</label>
-                                    <input type="checkbox" id="chkRequiresAuthentication" data-mini="true" />
-                                </li>
-                                <li>
-                                    <label for="txtUserName">UserName:</label>
-                                    <input id="txtUserName" name="txtUserName" />
-                                    <div class="fieldDescription">
-                                        The username specified in MP Extended - Authentication
-                                    </div>
-                                </li>
-                                <li>
-                                    <label for="txtPassword">Password:</label>
-                                    <input id="txtPassword" name="txtPassword" />
-                                    <div class="fieldDescription">
-                                        The password specified in MP Extended - Authentication
-                                    </div>
-                                </li>
-                                <li>
-                                    <button id="saveAndTest">Save and Test Connection</button>
-                                    <div id="connectionTestResult"></div>
-                                </li>
-                            </ul>
+                    <h1 id="connectionHeader">Media Portal Connection and Authentication</h1>
+                    <div class="inputContainer">
+                        <input is="emby-input" id="txtApiHostName" name="txtApiHostName" label="Host name:" />
+                        <div class="fieldDescription">
+                            The host name (address) of the MP Extended Service
+                        </div>
+                    </div>
+                    <div class="inputContainer">
+                        <input is="emby-input" id="txtApiPortNumber" name="txtApiPortNumber" label="Port number:" />
+                        <div class="fieldDescription">
+                            The port number of the MP Extended Service
+                        </div>
+                    </div>
+                    <label class="checkboxContainer">
+                        <input is="emby-checkbox" type="checkbox" id="chkRequiresAuthentication" />
+                        <span>Requires authentication</span>
+                    </label>
+                    <div class="inputContainer">
+                        <input is="emby-input" id="txtUserName" name="txtUserName" label="User name:" />
+                        <div class="fieldDescription">
+                            The username specified in MP Extended - Authentication
+                        </div>
+                    </div>
+                    <div class="inputContainer">
+                        <input is="emby-input" id="txtPassword" name="txtPassword" label="Password:" />
+                        <div class="fieldDescription">
+                            The password specified in MP Extended - Authentication
+                        </div>
+                    </div>
+                    <div>
+                        <button is="emby-button" type="button" id="saveAndTest" class="raised button-cancel block"><span>Save and Test Connection</span></button>
+                        <p id="connectionTestResult"></p>
+                    </div>
+
+                    <h1>Genre Mapping</h1>
+                    <p>Programs with these genres will be considered movies or sports.</p>
+                    <div class="inputContainer">
+                        <input is="emby-input" id="txtMovieGenre" name="txtMovieGenre" label="Movie genres:" />
+                        <div class="fieldDescription">
+                            Example: Movie,Film,TvMovie
+                        </div>
+                    </div>
+                    <div class="inputContainer">
+                        <input is="emby-input" id="txtSeriesGenre" name="txtSeriesGenre" label="Series genres:" />
+                        <div class="fieldDescription">
+                            Example: Action Series,Drama (Series),Daily Soap (limits series recordings to these genres. If unsure, leave empty.)
+                        </div>
+                    </div>
+                    <div class="inputContainer">
+                        <input is="emby-input" id="txtSportsGenre" name="txtSportsGenre" label="Sports genres:" />
+                        <div class="fieldDescription">
+                            Example: Sport,Football
+                        </div>
+                    </div>
+                    <div class="inputContainer">
+                        <input is="emby-input" id="txtNewsGenre" name="txtNewsGenre" label="News genres:" />
+                        <div class="fieldDescription">
+                            Example: News Report,Daily News
+                        </div>
+                    </div>
+                    <div class="inputContainer">
+                        <input is="emby-input" id="txtKidsGenre" name="txtKidsGenre" label="Kids genres:" />
+                        <div class="fieldDescription">
+                            Example: Cartoon,Animation
+                        </div>
+                    </div>
+                    <div class="inputContainer">
+                        <input is="emby-input" id="txtLiveGenre" name="txtLiveGenre" label="Live genres:" />
+                        <div class="fieldDescription">
+                            Example: Live Gameshow,Live Sports
                         </div>
                     </div>
 
-                    <div id="mappingSection" data-role="collapsible">
-                        <h2>Genre Mapping</h2>
-                        <div>List against each MB genre below, the MP program genres that belong to it</div>
-                        <div>
-                            <ul data-role="listview" class="ulForm">
-                                <li>
-                                    <label for="txtMovieGenre">Movie Genres</label>
-                                    <input id="txtMovieGenre" name="txtMovieGenre" />
-                                    <div class="fieldDescription">
-                                        Example: Movie,Film,TvMovie
-                                    </div>
-                                </li>
-                                <li>
-                                    <label for="txtSportsGenre">Sports Genres</label>
-                                    <input id="txtSportsGenre" name="txtSportsGenre" />
-                                    <div class="fieldDescription">
-                                        Example: Sport,Football
-                                    </div>
-                                </li>
-                            </ul>
+                    <h1>Other Options</h1>
+                    <div class="selectContainer">
+                        <select is="emby-select" id="selectChannelGroup" data-mini="true" label="Channel group:"></select>
+                        <div class="fieldDescription">
+                            Select the channel group you wish to use in Emby
+                        </div>
+                    </div>
+                    <div class="selectContainer">
+                        <select is="emby-select" id="selectChannelSortOption" label="Channel sort order:"></select>
+                        <div class="fieldDescription">
+                            Select the order in which the channels should be displayed
+                        </div>
+                    </div>
+                    <div class="selectContainer">
+                        <select is="emby-select" id="selectProfile" label="Streaming profiles:"></select>
+                        <div class="fieldDescription">
+                            Select the profile to use for streaming (Direct is recommended)
+                        </div>
+                    </div>
+                    <label class="checkboxContainer">
+                        <input is="emby-checkbox" type="checkbox" id="chkEnableDirectAccess" />
+                        <span>Enable direct access to recordings (Guide refresh required)</span>
+                    </label>
+                    <label class="checkboxContainer">
+                        <input is="emby-checkbox" type="checkbox" id="chkRequiresPathSubstitution" />
+                        <span>Requires pathsubstitution (Guide refresh required)</span>
+                    </label>
+                    <div class="inputContainer">
+                        <input is="emby-input" id="txtLocalFilePath" name="txtLocalFilePath" label="Local path:" />
+                        <div class="fieldDescription">
+                            The local recording folder specified in MediaPortal TVServer settings
+                        </div>
+                    </div>
+                    <div class="inputContainer">
+                        <input is="emby-input" id="txtRemoteFilePath" name="txtRemoteFilePath" label="Remote share:" />
+                        <div class="fieldDescription">
+                            The remote recording share to access MediaPortal recordings
+                        </div>
+                    </div>
+                    <div class="inputContainer">
+                        <input is="emby-input" id="txtThumbnailOffset" name="txtThumbnailOffset" label="Thumbnail offset (mins):" />
+                        <div class="fieldDescription">
+                            The number of minutes into a programme to capture the screen grab for display
                         </div>
                     </div>
 
-                    <div data-role="collapsible">
-                        <h2>Other Options</h2>
-                        <div>
-                            <ul data-role="listview" class="ulForm">
-                                <li>
-                                    <label for="selectChannelGroup">Channel Group:</label>
-                                    <select id="selectChannelGroup" data-mini="true"></select>
-                                    <div class="fieldDescription">
-                                        Select the channel group you wish to use in MB3
-                                    </div>
-                                </li>
-                                <li>
-                                    <label for="selectChannelSortOption">Channel Sort Order:</label>
-                                    <select id="selectChannelSortOption" data-mini="true"></select>
-                                    <div class="fieldDescription">
-                                        Select the order in which the channels should be displayed
-                                    </div>
-                                </li>
-                                <li>
-                                    <label for="selectProfile">Streaming Profiles:</label>
-                                    <select id="selectProfile" data-mini="true"></select>
-                                    <div class="fieldDescription">
-                                        Select the profile to use for streaming (Direct is recommended)
-                                    </div>
-                                </li>
-                                <li>
-                                    <label for="txtThumbnailOffset">Thumbnail Offset (Mins):</label>
-                                    <input id="txtThumbnailOffset" name="txtThumbnailOffset" />
-                                    <div class="fieldDescription">
-                                        The number of minutes into a programme to capture the screen grab for display
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
+                    <div>
+                        <button is="emby-button" type="submit" class="raised button-submit block"><span>Save</span></button>
                     </div>
-
-                    <ul class="ulForm" data-role="listview">
-                        <li>
-                            <button type="submit" data-theme="b">Save</button>
-                            <button type="button" onclick="history.back();">Cancel</button>
-                        </li>
-                    </ul>
 
                 </form>
             </div>
@@ -125,92 +138,89 @@
 
         <script type="text/javascript">
 
-            $("#connectionTestResult").hide();
-
             var MediaPortalConfigurationPage = {
-                pluginUniqueId: "2c6a0219-7621-4b06-8a64-da3f7038b649",
-
-                selectDirectory: function () {
-
-                    Dashboard.selectDirectory({
-                        callback: function (path) {
-
-                            if (path) {
-                                $('#txtDownloadPath', $.mobile.activePage).val(path);
-                            }
-                            $('#popupDirectoryPicker', $.mobile.activePage).popup("close");
-                        },
-
-                        header: "Select Path"
-                    });
-
-                }
+                pluginUniqueId: "2c6a0219-7621-4b06-8a64-da3f7038b649"
             };
 
-            $('.mediaPortalConfigurationPage').on('pageshow', function (event) {
-
-                Dashboard.showLoadingMsg();
+            $('.mediaPortalConfigurationPage').on('pageinit', function (event) {
 
                 var page = this;
 
-                ApiClient.getPluginConfiguration(MediaPortalConfigurationPage.pluginUniqueId).done(function (config) {
+                $("#saveAndTest", page).click(function () {
+                    saveAndTestConfiguration($('.mediaPortalConfigurationPage'));
+                });
+
+                $('form', page).on('submit', function (e) {
+
+                    saveConfiguration(this);
+
+                    return false; // Disable default form submission
+                });
+
+            }).on('pageshow', function (event) {
+
+                var page = this;
+
+                $("#connectionTestResult", page).hide();
+
+                Dashboard.showLoadingMsg();
+
+                ApiClient.getPluginConfiguration(MediaPortalConfigurationPage.pluginUniqueId).then(function (config) {
 
                     $('#txtApiHostName', page).val(config.ApiHostName);
                     $('#txtApiPortNumber', page).val(config.ApiPortNumber);
                     $('#chkRequiresAuthentication', page).checked(config.RequiresAuthentication || false).checkboxradio("refresh");
                     $('#txtUserName', page).val(config.UserName);
                     $('#txtPassword', page).val(config.Password);
+                    $('#chkEnableDirectAccess', page).checked(config.EnableDirectAccess || false).checkboxradio("refresh");
+                    $('#chkRequiresPathSubstitution', page).checked(config.RequiresPathSubstitution || false).checkboxradio("refresh");
+                    $('#txtLocalFilePath', page).val(config.LocalFilePath);
+                    $('#txtRemoteFilePath', page).val(config.RemoteFilePath);
                     $('#txtThumbnailOffset', page).val(config.PreviewThumbnailOffsetMinutes);
 
                     loadSelects(config, page);
                     loadGenres(config, page);
 
-                    var isValidConnection = TestConnection();
-
-                    // Collapse the connection section based on it being valid or not
-                    $('#connectionSection').data('collapsed', isValidConnection);
+                    TestConnection();
 
                     Dashboard.hideLoadingMsg();
                 });
             });
 
-            $("#saveAndTest").click(function () {
-                saveAndTestConfiguration($('.mediaPortalConfigurationPage'));
-            });
-
             function loadSelects(config, page) {
+
                 // load in the profiles
-                $.ajax({
+                ApiClient.ajax({
                     type: "GET",
                     url: ApiClient.getUrl("MediaPortalPlugin/Profiles"),
                     dataType: "json"
-                }).done(function (profiles) {
+                }).then(function (profiles) {
                     $('#selectProfile', page).html(profiles.map(function (profile) {
                         var selectedText = profile == config.StreamingProfileName ? " selected" : "";
                         return '<option value="' + profile + '"' + selectedText + '>' + profile + '</option>';
-                    })).selectmenu('refresh').trigger('change');
+                    }));
                 });
 
-                $.ajax({
+                ApiClient.ajax({
                     type: "GET",
                     url: ApiClient.getUrl("MediaPortalPlugin/ChannelGroups"),
                     dataType: "json"
-                }).done(function (groups) {
+                }).then(function (groups) {
                     $('#selectChannelGroup', page).html(groups.map(function (group) {
                         var selectedText = group.Id == config.DefaultChannelGroup ? " selected" : "";
                         return '<option value="' + group.Id + '"' + selectedText + '>' + group.GroupName + '</option>';
-                    })).selectmenu('refresh').trigger('change');
+                    }));
                 });
 
-                $.ajax({
+                ApiClient.ajax({
                     type: "GET",
                     url: ApiClient.getUrl("MediaPortalPlugin/ChannelSortOptions"),
                     dataType: "json"
-                }).done(function (options) {
+                }).then(function (options) {
                     $('#selectChannelSortOption', page).html(options.map(function (option) {
                         var selectedText = option.Id == config.DefaultChannelSortOrder ? " selected" : "";
                         return '<option value="' + option.Id + '"' + selectedText + '>' + option.Description + '</option>';
-                    })).selectmenu('refresh').trigger('change');
+                    }));
                 });
             }
 
@@ -221,34 +231,42 @@
                     if (config.GenreMappings["GENREMOVIE"] != null) {
                         $('#txtMovieGenre', page).val(config.GenreMappings["GENREMOVIE"].join(','));
                     }
-
+                    if (config.GenreMappings["GENRESERIES"] != null) {
+                        $('#txtSeriesGenre', page).val(config.GenreMappings["GENRESERIES"].join(','));
+                    }
                     if (config.GenreMappings["GENRESPORT"] != null) {
                         $('#txtSportsGenre', page).val(config.GenreMappings["GENRESPORT"].join(','));
+                    }
+                    if (config.GenreMappings["GENRENEWS"] != null) {
+                        $('#txtNewsGenre', page).val(config.GenreMappings["GENRENEWS"].join(','));
+                    }
+                    if (config.GenreMappings["GENREKIDS"] != null) {
+                        $('#txtKidsGenre', page).val(config.GenreMappings["GENREKIDS"].join(','));
+                    }
+                    if (config.GenreMappings["GENRELIVE"] != null) {
+                        $('#txtLiveGenre', page).val(config.GenreMappings["GENRELIVE"].join(','));
                     }
                 }
             }
 
-            $('.mediaPortalConfigurationPage').on('submit', function (e) {
-
-                saveConfiguration(this);
-
-                return false; // Disable default form submission
-            });
-
             function saveAndTestConfiguration(form) {
-                saveConfiguration(form, function () { TestConnection(); });
+                saveConfiguration(form);
             }
 
-            function saveConfiguration(form, callback) {
+            function saveConfiguration(form) {
                 Dashboard.showLoadingMsg();
 
-                ApiClient.getPluginConfiguration(MediaPortalConfigurationPage.pluginUniqueId).done(function (config) {
+                ApiClient.getPluginConfiguration(MediaPortalConfigurationPage.pluginUniqueId).then(function (config) {
 
                     config.ApiHostName = $('#txtApiHostName', form).val();
                     config.ApiPortNumber = $('#txtApiPortNumber', form).val();
                     config.RequiresAuthentication = $('#chkRequiresAuthentication', form).checked();
                     config.UserName = $('#txtUserName', form).val();
                     config.Password = $('#txtPassword', form).val();
+                    config.EnableDirectAccess = $('#chkEnableDirectAccess', form).checked();
+                    config.RequiresPathSubstitution = $('#chkRequiresPathSubstitution', form).checked();
+                    config.LocalFilePath = $('#txtLocalFilePath', form).val();
+                    config.RemoteFilePath = $('#txtRemoteFilePath', form).val();
                     config.PreviewThumbnailOffsetMinutes = $('#txtThumbnailOffset', form).val();
                     config.StreamingProfileName = $('#selectProfile', form).val();
                     config.DefaultChannelGroup = $('#selectChannelGroup', form).val();
@@ -257,15 +275,17 @@
                     // Copy over the genre mapping fields
                     config.GenreMappings = {
                         "GENREMOVIE": $('#txtMovieGenre', form).val().split(","),
+                        "GENRESERIES": $('#txtSeriesGenre', form).val().split(","),
                         "GENRESPORT": $('#txtSportsGenre', form).val().split(","),
-                    }
+                        "GENRENEWS": $('#txtNewsGenre', form).val().split(","),
+                        "GENREKIDS": $('#txtKidsGenre', form).val().split(","),
+                        "GENRELIVE": $('#txtLiveGenre', form).val().split(","),
+                    };
 
-                    ApiClient.updatePluginConfiguration(MediaPortalConfigurationPage.pluginUniqueId, config).done(function () {
+                    ApiClient.updatePluginConfiguration(MediaPortalConfigurationPage.pluginUniqueId, config).then(function () {
 
                         // Reload the selects - this may be called by the 'test' button
                         loadSelects(config, form);
-
-                        if (callback != null) { callback(); }
 
                         Dashboard.processPluginConfigurationUpdateResult();
                     });
@@ -275,29 +295,27 @@
                 Dashboard.hideLoadingMsg();
             }
 
-            function TestConnection() {
-                var result = false;
+            function TestConnection(page) {
 
-                $.ajax({
+                ApiClient.ajax({
                     type: "GET",
                     url: ApiClient.getUrl("MediaPortalPlugin/TestConnection"),
                     dataType: "json",
                     async: false
-                }).done(function (ajaxResult) {
-                    result = ajaxResult;
+                }).then(function (result) {
+
+                    if (!result) {
+                        $("#connectionTestResult", page).text("Unable to connect to MP, please review your connection settings before continuing");
+                        $("#connectionTestResult", page).css({ 'color': 'red' });
+                    } else {
+                        $("#connectionTestResult", page).text("Successfully connected");
+                        $("#connectionTestResult", page).css({ 'color': 'green' });
+                    };
+
+                    $("#connectionTestResult").show();
+
+                    return result;
                 });
-
-                if (!result) {
-                    $("#connectionTestResult").text("Unable to connect to MP, please review your connection settings before continuing");
-                    $("#connectionTestResult").css({ 'color': 'red' });
-                } else {
-                    $("#connectionTestResult").text("Successfully connected");
-                    $("#connectionTestResult").css({ 'color': 'green' });
-                };
-
-                $("#connectionTestResult").show();
-
-                return result;
             }
         </script>
     </div>
