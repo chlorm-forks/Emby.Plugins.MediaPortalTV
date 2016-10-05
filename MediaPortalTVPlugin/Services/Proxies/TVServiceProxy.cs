@@ -512,7 +512,7 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Proxies
                 IsPrePaddingRequired = (r.PreRecordInterval > 0),
                 PostPaddingSeconds = r.PostRecordInterval * 60,
                 PrePaddingSeconds = r.PreRecordInterval * 60,
-                Status = RecordingStatus.Scheduled,
+                Status = RecordingStatus.New,
                 StartDate = r.StartTime,
             }).ToList();
 
