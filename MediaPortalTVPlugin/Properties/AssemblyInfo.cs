@@ -30,7 +30,7 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("1.3.3.554")]
+[assembly: AssemblyVersion("1.3.3.555")]
 
 //// BUild type
 //#if DEBUG
