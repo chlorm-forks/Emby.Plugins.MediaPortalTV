@@ -43,44 +43,59 @@ namespace MediaBrowser.Plugins.MediaPortal.Helpers
 
         public static WebScheduleType ToScheduleType(this SeriesTimerInfo info)
         {
-            if (info.RecordAnyChannel)
-            {
-                return WebScheduleType.EveryTimeOnEveryChannel;
-            }
-
-            if (info.RecordAnyTime)
-            {
-                return WebScheduleType.EveryTimeOnThisChannel;
-            }
-
-            if (info.Days.Count == 0)
+            /// Once = 0
+            if (!info.RecordAnyTime && !info.RecordAnyChannel && info.Days.Count == 0)
             {
                 return WebScheduleType.Once;
             }
 
-            if (info.Days.Count == 1)
+            /// Daily = 1
+            else if (!info.RecordAnyTime && !info.RecordAnyChannel && info.Days.IsDaily())
+            {
+                return WebScheduleType.Daily;
+            }
+
+            /// Weekly = 2
+            else if (!info.RecordAnyTime && !info.RecordAnyChannel && info.Days.Count == 1)
             {
                 return WebScheduleType.Weekly;
             }
 
-            if (info.Days.IsDaily())
+            /// WeeklyEveryTimeOnThisChannel = 7
+            else if (info.RecordAnyTime && !info.RecordAnyChannel && info.Days.Count == 1)
             {
-                return WebScheduleType.Daily;
-            }         
+                return WebScheduleType.WeeklyEveryTimeOnThisChannel;
+            }
 
-            if (info.Days.IsWeekends())
+            ///EveryTimeOnThisChannel = 3
+            else if (info.RecordAnyTime && !info.RecordAnyChannel && (info.Days.Count == 0 || info.Days.IsDaily()))
+            {
+                return WebScheduleType.EveryTimeOnThisChannel;
+            }
+
+            ///EveryTimeOnEveryChannel = 4
+            else if (info.RecordAnyChannel && (info.RecordAnyTime || !info.RecordAnyTime) && (info.Days.Count == 0 || info.Days.IsDaily()))
+            {
+                return WebScheduleType.EveryTimeOnEveryChannel;
+            }
+
+            /// Weekends = 5
+            else if (info.Days.IsWeekends())
             {
                 return WebScheduleType.Weekends;
             }
 
-            if (info.Days.IsWorkingDays())
+            /// WorkingDays = 6
+            else if (info.Days.IsWorkingDays())
             {
                 return WebScheduleType.WorkingDays;
             }
 
-            // if we get here, then the user specified options that are not supported
-            // by MP - so specify daily
-            return WebScheduleType.Daily;
+            /// if we get here, then the user specified options that are not supported by MP
+            else
+            {
+                return WebScheduleType.Once;
+            }
         }
 
         public static IEnumerable<TResult> Process<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> func) where TResult : class

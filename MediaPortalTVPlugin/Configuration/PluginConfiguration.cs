@@ -49,6 +49,26 @@ namespace MediaBrowser.Plugins.MediaPortal.Configuration
         /// The password for authenticating with MPExtended
         /// </summary>
         public string Password { get; set; }
+        
+        /// <summary>
+        /// Enable direct access to recordings
+        /// </summary>
+        public bool EnableDirectAccess { get; set; }
+
+        /// <summary>
+        /// Enable Path Substitution
+        /// </summary>
+        public bool RequiresPathSubstitution { get; set; }
+
+        /// <summary>
+        /// The lokal recording folder of MediaPortal
+        /// </summary>
+        public string LocalFilePath { get; set; }
+
+        /// <summary>
+        /// The remote recording share of MediaPortal
+        /// </summary>
+        public string RemoteFilePath { get; set; }
 
         /// <summary>
         /// The number of minutes into a recorded program to grab the screenshot for previewing.
@@ -101,6 +121,22 @@ namespace MediaBrowser.Plugins.MediaPortal.Configuration
                 if (String.IsNullOrEmpty(Password))
                 {
                     return new ValidationResult(false, "Please specify an Password (check MPExtended - Authentication");
+                }
+            }
+
+            if (EnableDirectAccess)
+            { }
+
+            if (RequiresPathSubstitution)
+            {
+                if (String.IsNullOrEmpty(LocalFilePath))
+                {
+                    return new ValidationResult(false, "Please specify MediaPortals local recording folder");
+                }
+
+                if (String.IsNullOrEmpty(RemoteFilePath))
+                {
+                    return new ValidationResult(false, "Please specify MediaPortals remote recording share");
                 }
             }
 

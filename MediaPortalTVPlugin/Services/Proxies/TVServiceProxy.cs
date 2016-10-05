@@ -62,7 +62,6 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Proxies
             if (Configuration.DefaultChannelGroup > 0)
             {
                 // This is the only way to get out the channels in the same order that MP displays them.
-                // No idea why you sepecify Year as the sort field!
                 builder.AppendFormat("?groupId={0}", Configuration.DefaultChannelGroup);
             }
 
@@ -84,7 +83,8 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Proxies
                 Id = c.Id.ToString(CultureInfo.InvariantCulture),
                 ChannelType = c.IsTv ? ChannelType.TV : ChannelType.Radio,
                 Name = c.Title,
-                Number = c.ExternalId,
+                //Number = c.ExternalId,
+                Number = " ",
                 ImageUrl = _wssProxy.GetChannelLogoUrl(c.Id)
             });
         }
@@ -97,6 +97,7 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Proxies
         public IEnumerable<ProgramInfo> GetPrograms(string channelId, DateTime startDateUtc, DateTime endDateUtc,
             CancellationToken cancellationToken)
         {
+            int x = 0;
             var response = GetFromService<List<Program>>(
                 cancellationToken,
                 "GetProgramsDetailedForChannel?channelId={0}&starttime={1}&endtime={2}",
@@ -117,12 +118,23 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Proxies
                     EpisodeTitle = p.EpisodeName,
                     Genres = new List<String>(),
                     Id = p.Id.ToString(CultureInfo.InvariantCulture),
-                    //IsSeries = !String.IsNullOrEmpty(p.SeriesNum) || !String.IsNullOrEmpty(p.EpisodeNum),
-                    IsSeries = true, // Set this to allow series scheduling for all programs,
                     Name = p.Title,
                     Overview = p.Description,
+                    // IsSeries = true,
+                    // IsPremiere = false,
+                    // IsRepeat = true,
                     // OriginalAirDate = p.OriginalAirDate
                 };
+                
+                if (!String.IsNullOrEmpty(p.EpisodeNum))
+                {
+                    program.EpisodeNumber = Int32.Parse(p.EpisodeNum);
+                }
+
+                if (!String.IsNullOrEmpty(p.SeriesNum))
+                {
+                    program.SeasonNumber = Int32.Parse(p.SeriesNum);
+                }
                 
                 if (!String.IsNullOrEmpty(p.Genre))
                 {
@@ -140,7 +152,98 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Proxies
         public IEnumerable<RecordingInfo> GetRecordings(CancellationToken cancellationToken)
         {
             var response = GetFromService<List<Recording>>(cancellationToken, "GetRecordings");
+            var configuration = Plugin.Instance.Configuration;
+            if (configuration.EnableDirectAccess && !configuration.RequiresPathSubstitution)
+            {
+                var recordings = response.Select(r =>
+                {
+                    var recording = new RecordingInfo()
+                    {
+                        ChannelId = r.ChannelId.ToString(CultureInfo.InvariantCulture),
+                        EndDate = r.EndTime,
+                        EpisodeTitle = r.EpisodeName,
+                        Genres = new List<String>(),
+                        Id = r.Id.ToString(CultureInfo.InvariantCulture),
+                        IsSeries = (!String.IsNullOrEmpty(r.EpisodeNum)) ? true : false,
+                        Name = r.Title,
+                        Overview = r.Description,
+                        ProgramId = r.ScheduleId.ToString(CultureInfo.InvariantCulture),
+                        StartDate = r.StartTime,
+                        //ImageUrl = _wssProxy.GetRecordingImageUrl(r.Id.ToString()),
+                        Path = r.FileName,
+                    };
 
+                    if (r.IsRecording)
+                    {
+                        var schedule = GetFromService<Schedule>(cancellationToken, "GetScheduleById?scheduleId={0}", r.ScheduleId);
+                        {
+                            if (schedule.Series)
+                            {
+                                recording.SeriesTimerId = schedule.ParentScheduleId.ToString(CultureInfo.InvariantCulture);
+                            }
+                        } 
+                    }
+                    
+                    if (!String.IsNullOrEmpty(r.Genre))
+                    {
+                        recording.Genres.Add(r.Genre);
+                    }
+
+                    return recording;
+
+                }).ToList();
+
+                return recordings;
+            }
+
+            else if (configuration.EnableDirectAccess && configuration.RequiresPathSubstitution)
+            {
+                var localpath = String.Format("{0}", configuration.LocalFilePath);
+                var remotepath = String.Format("{0}", configuration.RemoteFilePath);
+
+                var recordings = response.Select(r =>
+                {
+                    var recording = new RecordingInfo()
+                    {
+                        ChannelId = r.ChannelId.ToString(CultureInfo.InvariantCulture),
+                        EndDate = r.EndTime,
+                        EpisodeTitle = r.EpisodeName,
+                        Genres = new List<String>(),
+                        Id = r.Id.ToString(CultureInfo.InvariantCulture),
+                        IsSeries = (!String.IsNullOrEmpty(r.EpisodeNum)) ? true : false,
+                        Name = r.Title,
+                        Overview = r.Description,
+                        ProgramId = r.ScheduleId.ToString(CultureInfo.InvariantCulture),
+                        StartDate = r.StartTime,
+                        //ImageUrl = _wssProxy.GetRecordingImageUrl(r.Id.ToString()),
+                        Path = r.FileName.Replace(localpath, remotepath),
+                    };
+
+                    if (r.IsRecording)
+                    {
+                        var schedule = GetFromService<Schedule>(cancellationToken, "GetScheduleById?scheduleId={0}", r.ScheduleId);
+                        {
+                            if (schedule.Series)
+                            {
+                                recording.SeriesTimerId = schedule.ParentScheduleId.ToString(CultureInfo.InvariantCulture);
+                            }
+                        }
+                    }
+
+                    if (!String.IsNullOrEmpty(r.Genre))
+                    {
+                        recording.Genres.Add(r.Genre);
+                    }
+
+                    return recording;
+
+                }).ToList();
+
+                return recordings;
+            }
+            
+            else
+            {
             var recordings = response.Select(r =>
             {
                 var recording = new RecordingInfo()
@@ -150,12 +253,24 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Proxies
                     EpisodeTitle = r.EpisodeName,
                     Genres = new List<String>(),
                     Id = r.Id.ToString(CultureInfo.InvariantCulture),
+                        IsSeries = (!String.IsNullOrEmpty(r.EpisodeNum)) ? true : false,
                     Name = r.Title,
                     Overview = r.Description,
                     ProgramId = r.ScheduleId.ToString(CultureInfo.InvariantCulture),
                     StartDate = r.StartTime,
-                    ImageUrl = _wssProxy.GetRecordingImageUrl(r.Id.ToString()),
+                    //ImageUrl = _wssProxy.GetRecordingImageUrl(r.Id.ToString(), scheduleDefaults.PreRecordInterval),
                 };
+
+                    if (r.IsRecording)
+                    {
+                        var schedule = GetFromService<Schedule>(cancellationToken, "GetScheduleById?scheduleId={0}", r.ScheduleId);
+                        {
+                            if (schedule.Series)
+                            {
+                                recording.SeriesTimerId = schedule.ParentScheduleId.ToString(CultureInfo.InvariantCulture);
+                            }
+                        }
+                    }
 
                 if (!String.IsNullOrEmpty(r.Genre))
                 {
@@ -168,10 +283,52 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Proxies
 
             return recordings;
         }
+        }
 
         public RecordingInfo GetRecording(CancellationToken cancellationToken, String id)
         {
             var response = GetFromService<Recording>(cancellationToken, "GetRecordingById?id={0}", id);
+            var configuration = Plugin.Instance.Configuration;
+            if (configuration.EnableDirectAccess && !configuration.RequiresPathSubstitution)
+            {
+                var recording = new RecordingInfo()
+                {
+                    ChannelId = response.ChannelId.ToString(CultureInfo.InvariantCulture),
+                    EndDate = response.EndTime,
+                    EpisodeTitle = response.EpisodeName,
+                    Genres = new List<String>(),
+                    Id = response.Id.ToString(CultureInfo.InvariantCulture),
+                    IsSeries = (!String.IsNullOrEmpty(response.EpisodeNum)) ? true : false,
+                    Name = response.Title,
+                    Overview = response.Description,
+                    ProgramId = response.ScheduleId.ToString(CultureInfo.InvariantCulture),
+                    StartDate = response.StartTime,
+                    Path = response.FileName,
+                };
+
+                if (response.IsRecording)
+                {
+                    var schedule = GetFromService<Schedule>(cancellationToken, "GetScheduleById?scheduleId={0}", response.ScheduleId);
+                    {
+                        if (schedule.Series)
+                        {
+                            recording.SeriesTimerId = schedule.ParentScheduleId.ToString(CultureInfo.InvariantCulture);
+                        }
+                    }
+                }
+
+                if (!String.IsNullOrEmpty(response.Genre))
+                {
+                    recording.Genres.Add(response.Genre);
+                }
+
+                return recording;
+            }
+            
+            else if (configuration.EnableDirectAccess && configuration.RequiresPathSubstitution)
+            {
+                var localpath = String.Format("{0}", configuration.LocalFilePath);
+                var remotepath = String.Format("{0}", configuration.RemoteFilePath);
 
             var recording = new RecordingInfo()
             {
@@ -180,12 +337,24 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Proxies
                 EpisodeTitle = response.EpisodeName,
                 Genres = new List<String>(),
                 Id = response.Id.ToString(CultureInfo.InvariantCulture),
+                    IsSeries = (!String.IsNullOrEmpty(response.EpisodeNum)) ? true : false,
                 Name = response.Title,
                 Overview = response.Description,
                 ProgramId = response.ScheduleId.ToString(CultureInfo.InvariantCulture),
                 StartDate = response.StartTime,
-                Path = response.FileName,
+                    Path = response.FileName.Replace(localpath, remotepath),
             };
+
+                if (response.IsRecording)
+                {
+                    var schedule = GetFromService<Schedule>(cancellationToken, "GetScheduleById?scheduleId={0}", response.ScheduleId);
+                    {
+                        if (schedule.Series)
+                        {
+                            recording.SeriesTimerId = schedule.ParentScheduleId.ToString(CultureInfo.InvariantCulture);
+                        }
+                    }
+                }
 
             if (!String.IsNullOrEmpty(response.Genre))
             {
@@ -193,6 +362,48 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Proxies
             }
 
             return recording;
+        }
+
+            else
+            {
+                var recording = new RecordingInfo()
+                {
+                    ChannelId = response.ChannelId.ToString(CultureInfo.InvariantCulture),
+                    EndDate = response.EndTime,
+                    EpisodeTitle = response.EpisodeName,
+                    Genres = new List<String>(),
+                    Id = response.Id.ToString(CultureInfo.InvariantCulture),
+                    IsSeries = (!String.IsNullOrEmpty(response.EpisodeNum)) ? true : false,
+                    Name = response.Title,
+                    Overview = response.Description,
+                    ProgramId = response.ScheduleId.ToString(CultureInfo.InvariantCulture),
+                    StartDate = response.StartTime,
+                };
+
+                if (response.IsRecording)
+                {
+                    var schedule = GetFromService<Schedule>(cancellationToken, "GetScheduleById?scheduleId={0}", response.ScheduleId);
+                    {
+                        if (schedule.Series)
+                        {
+                            recording.SeriesTimerId = schedule.ParentScheduleId.ToString(CultureInfo.InvariantCulture);
+                        }
+                    }
+                }
+
+                if (!String.IsNullOrEmpty(response.Genre))
+                {
+                    recording.Genres.Add(response.Genre);
+                }
+
+                return recording;
+            }
+
+        }
+
+        private Schedule GetSchedule(CancellationToken cancellationToken, String Id)
+        {
+            return GetFromService<Schedule>(cancellationToken, "GetScheduleById?scheduleId={0}", Id);
         }
 
         public IEnumerable<SeriesTimerInfo> GetSeriesSchedules(CancellationToken cancellationToken)
@@ -206,6 +417,8 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Proxies
                     ChannelId = r.ChannelId.ToString(CultureInfo.InvariantCulture),
                     EndDate = r.EndTime,
                     Id = r.Id.ToString(CultureInfo.InvariantCulture),
+                    SeriesId = r.Id.ToString(CultureInfo.InvariantCulture),
+                    ProgramId = r.Id.ToString(CultureInfo.InvariantCulture),
                     Name = r.Title,
                     IsPostPaddingRequired = (r.PostRecordInterval > 0),
                     IsPrePaddingRequired = (r.PreRecordInterval > 0),
@@ -235,23 +448,29 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Proxies
             switch (schedulingType)
             {
                 case WebScheduleType.EveryTimeOnThisChannel:
-                case WebScheduleType.EveryTimeOnEveryChannel:
-                    seriesTimerInfo.RecordAnyTime = schedulingType == WebScheduleType.EveryTimeOnThisChannel;
-                    seriesTimerInfo.RecordAnyChannel = schedulingType == WebScheduleType.EveryTimeOnEveryChannel;
+                    seriesTimerInfo.RecordAnyTime = true;
                     break;
-
+                case WebScheduleType.EveryTimeOnEveryChannel:
+                    seriesTimerInfo.RecordAnyTime = true;
+                    seriesTimerInfo.RecordAnyChannel = true;
+                    break;
+                case WebScheduleType.WeeklyEveryTimeOnThisChannel:
+                    seriesTimerInfo.Days.Add(schedule.StartTime.DayOfWeek);
+                    seriesTimerInfo.RecordAnyTime = true;
+                    break;
                 case WebScheduleType.Daily:
+                    seriesTimerInfo.Days.AddRange(new[]
+                        {
+                            DayOfWeek.Monday,
+                            DayOfWeek.Tuesday,
+                            DayOfWeek.Wednesday,
+                            DayOfWeek.Thursday,
+                            DayOfWeek.Friday,
+                            DayOfWeek.Saturday,
+                            DayOfWeek.Sunday,
+                        });
+                    break;
                 case WebScheduleType.WorkingDays:
-                case WebScheduleType.Weekends:
-                case WebScheduleType.Weekly:
-
-                    if (schedulingType == WebScheduleType.Weekly)
-                    {
-                        seriesTimerInfo.Days.Add(schedule.StartTime.DayOfWeek);
-                    }
-
-                    if (schedulingType == WebScheduleType.Daily || schedulingType == WebScheduleType.WorkingDays)
-                    {
                         seriesTimerInfo.Days.AddRange(new[]
                         {
                             DayOfWeek.Monday,
@@ -260,16 +479,16 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Proxies
                             DayOfWeek.Thursday,
                             DayOfWeek.Friday,
                         });
-                    }
-
-                    if (schedulingType == WebScheduleType.Daily || schedulingType == WebScheduleType.Weekends)
-                    {
+                    break;
+                case WebScheduleType.Weekends:
                         seriesTimerInfo.Days.AddRange(new[]
                         {
                            DayOfWeek.Saturday,
                            DayOfWeek.Sunday,
                         });
-                    }
+                    break;
+                case WebScheduleType.Weekly:
+                    seriesTimerInfo.Days.Add(schedule.StartTime.DayOfWeek);
                     break;
 
                 default:
@@ -286,6 +505,8 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Proxies
                 ChannelId = r.ChannelId.ToString(CultureInfo.InvariantCulture),
                 EndDate = r.EndTime,
                 Id = r.Id.ToString(CultureInfo.InvariantCulture),
+                SeriesTimerId = r.ParentScheduleId.ToString(CultureInfo.InvariantCulture),
+                ProgramId = r.Id.ToString(CultureInfo.InvariantCulture),
                 Name = r.Title,
                 IsPostPaddingRequired = (r.PostRecordInterval > 0),
                 IsPrePaddingRequired = (r.PreRecordInterval > 0),
@@ -342,7 +563,7 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Proxies
 
             builder.Remove(builder.Length - 1, 1);
 
-            Plugin.Logger.Info("Creating series scheule with StartTime: {0}, EndTime: {1}, ProgramData from MP: {2}",
+            Plugin.Logger.Info("Creating series schedule with StartTime: {0}, EndTime: {1}, ProgramData from MP: {2}",
                 schedule.StartDate, schedule.EndDate, builder.ToString());
 
             var response = GetFromService<WebBoolResult>(cancellationToken, builder.ToString());
@@ -350,6 +571,46 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Proxies
             {
                 throw new LiveTvConflictException();
             }
+        }
+
+        public void ChangeSeriesSchedule(CancellationToken cancellationToken, SeriesTimerInfo schedule)
+        {
+            var timerData = GetSchedule(cancellationToken, schedule.Id);
+            if (timerData == null)
+            {
+                throw ExceptionHelper.CreateArgumentException("schedule.Id", "The schedule id {0} could not be found", schedule.Id);
+            }
+
+            var builder = new StringBuilder("AddScheduleDetailed?");
+            builder.AppendFormat("channelid={0}&", timerData.ChannelId);
+            builder.AppendFormat("title={0}&", timerData.Title);
+            builder.AppendFormat("starttime={0}&", timerData.StartTime.ToLocalTime().ToUrlDate());
+            builder.AppendFormat("endtime={0}&", timerData.EndTime.ToLocalTime().ToUrlDate());
+            builder.AppendFormat("scheduletype={0}&", (Int32)schedule.ToScheduleType());
+
+            if (schedule.IsPrePaddingRequired & schedule.PrePaddingSeconds > 0)
+            {
+                builder.AppendFormat("preRecordInterval={0}&", TimeSpan.FromSeconds(schedule.PrePaddingSeconds).RoundUpMinutes());
+            }
+
+            if (schedule.IsPostPaddingRequired & schedule.PostPaddingSeconds > 0)
+            {
+                builder.AppendFormat("postRecordInterval={0}&", TimeSpan.FromSeconds(schedule.PostPaddingSeconds).RoundUpMinutes());
+            }
+
+            builder.Remove(builder.Length - 1, 1);
+
+            Plugin.Logger.Info("Creating series schedule with StartTime: {0}, EndTime: {1}, ProgramData from MP: {2}",
+                schedule.StartDate, schedule.EndDate, builder.ToString());
+
+            Plugin.TvProxy.DeleteSchedule(cancellationToken, schedule.Id);
+
+            var response = GetFromService<WebBoolResult>(cancellationToken, builder.ToString());
+            if (!response.Result)
+            {
+                throw new LiveTvConflictException();
+            }
+
         }
 
         public void CreateSchedule(CancellationToken cancellationToken, TimerInfo timer)
@@ -379,7 +640,7 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Proxies
 
             builder.Remove(builder.Length - 1, 1);
 
-            Plugin.Logger.Info("Creating scheule with StartTime: {0}, EndTime: {1}, ProgramData from MP: {2}",
+            Plugin.Logger.Info("Creating schedule with StartTime: {0}, EndTime: {1}, ProgramData from MP: {2}",
                 timer.StartDate, timer.EndDate, builder.ToString());
 
             var response = GetFromService<WebBoolResult>(cancellationToken, builder.ToString());

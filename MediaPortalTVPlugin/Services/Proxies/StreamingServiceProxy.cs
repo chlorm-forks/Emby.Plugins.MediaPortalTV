@@ -21,6 +21,7 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Proxies
         private readonly INetworkManager _networkManager;
 
         private String _streamingEndpoint = "StreamingService/stream";
+        private String _recordingEndpoint = "TVAccessService/json";
 
         private const int STREAM_TIMEOUT_DIRECT = 10;
         private const int STREAM_TV_RECORDING_PROVIDER = 0;
@@ -104,7 +105,6 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Proxies
         {
             return GetStream(cancellationToken, WebMediaType.TV, channelId, TimeSpan.Zero);
         }
-
         
         /// <summary>
         /// Cancels an executing stream.
@@ -130,17 +130,19 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Proxies
                 mediaType, streamIdentifier, STREAM_TV_RECORDING_PROVIDER);
         }
 
+
         private StreamingDetails GetStream(CancellationToken cancellationToken, WebMediaType webMediaType, string itemId, TimeSpan startPosition)
         {
-            // var profile = GetTranscoderProfile(cancellationToken, "Direct");
-
             var profile = GetTranscoderProfile(cancellationToken, Configuration.StreamingProfileName);
-            if (profile == null)
-            {
-                throw new Exception(String.Format("Cannot find a profile with the name {0}", Configuration.StreamingProfileName));
-            }
+            var profilename = String.Format("{0}", Configuration.StreamingProfileName);
+            
+            //var mediatype = String.Format("{0}", webMediaType);
+            //if (mediatype == "Recording")
+            //{
+            //    profilename = "Android VLC direct";
+            //}
 
-            var identifier = HttpUtility.UrlEncode(String.Format("{0}-{1}-{2:yyyyMMddHHmmss}", webMediaType, itemId, DateTime.UtcNow));
+            var identifier = System.Net.WebUtility.UrlEncode(String.Format("{0}-{1}-{2:yyyyMMddHHmmss}", webMediaType, itemId, DateTime.UtcNow));
             var isStreamInitialised = GetFromService<WebBoolResult>(cancellationToken,
                     "InitStream?type={0}&provider={1}&itemId={2}&identifier={3}&idleTimeout={4}&clientDescription={5}",
                     webMediaType,
@@ -157,9 +159,9 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Proxies
 
             // Returns the url for streaming
             var url = GetFromService<WebStringResult>(cancellationToken,"StartStream?identifier={0}&profileName={1}&startPosition={2}",
-                    identifier,
-                    profile.Name, // Provider
-                    (Int32)startPosition.TotalSeconds).Result;
+                identifier,
+                profilename, // Provider
+                (Int32)startPosition.TotalSeconds).Result;
 
             var isAuthorised = true;
             foreach (var ipAddress in _networkManager.GetLocalIpAddresses())
@@ -181,6 +183,7 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Proxies
                     Path = url,
                     Protocol = MediaProtocol.Http,
                     Id = itemId,
+                    ReadAtNativeFramerate = true,
                 }
             };
 
@@ -189,7 +192,7 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Proxies
             if (mediaInfo != null)
             {
                 streamingDetails.SourceInfo.Container = mediaInfo.Container;
-                streamingDetails.SourceInfo.RunTimeTicks = TimeSpan.FromSeconds(mediaInfo.Duration).Ticks;
+                streamingDetails.SourceInfo.RunTimeTicks = TimeSpan.FromMilliseconds(mediaInfo.Duration).Ticks;
                 
                 //streamingDetails.SourceInfo.AudioChannels = mediaInfo.AudioStreams.Count;
                 //var defaultAudioStream = mediaInfo.AudioStreams.FirstOrDefault();
@@ -206,7 +209,6 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Proxies
                 //    streamingDetails.SourceInfo.Width = defaultVideoStream.Width;
                 //}
             }
-
             return streamingDetails;
         }
 
@@ -215,12 +217,12 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Proxies
         /// </summary>
         /// <param name="recordingId">The recording id.</param>
         /// <returns></returns>
-        public String GetRecordingImageUrl(String recordingId)
+        public String GetRecordingImageUrl(String recordingId, TimeSpan preRecordInterval)
         {
             return GetUrl(_streamingEndpoint, "ExtractImage?type={0}&provider={1}&position={2}&itemid={3}",
                 WebMediaType.Recording,
                 STREAM_TV_RECORDING_PROVIDER,
-                Configuration.PreviewThumbnailOffsetMinutes * 60,
+                ((Double)Configuration.PreviewThumbnailOffsetMinutes + preRecordInterval.TotalMinutes) * 60,
                 recordingId);
         }
 

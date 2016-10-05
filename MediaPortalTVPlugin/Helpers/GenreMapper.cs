@@ -13,11 +13,19 @@ namespace MediaBrowser.Plugins.MediaPortal.Helpers
     public class GenreMapper
     {
         public const string GENRE_MOVIE = "GENREMOVIE";
+        public const string GENRE_SERIES = "GENRESERIES";
         public const string GENRE_SPORT = "GENRESPORT";
+        public const string GENRE_NEWS = "GENRENEWS";
+        public const string GENRE_KIDS = "GENREKIDS";
+        public const string GENRE_LIVE = "GENRELIVE";
 
         private readonly PluginConfiguration _configuration;
         private readonly List<String> _movieGenres;
-        private readonly List<String> _sportGenres; 
+        private readonly List<String> _seriesGenres;
+        private readonly List<String> _sportGenres;
+        private readonly List<String> _newsGenres;
+        private readonly List<String> _kidsGenres;
+        private readonly List<String> _liveGenres;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GenreMapper"/> class.
@@ -33,7 +41,11 @@ namespace MediaBrowser.Plugins.MediaPortal.Helpers
             _configuration = configuration;
 
             _movieGenres = new List<string>();
+            _seriesGenres = new List<string>();
             _sportGenres = new List<string>();
+            _newsGenres = new List<string>();
+            _kidsGenres = new List<string>();
+            _liveGenres = new List<string>();
 
             LoadInternalLists(_configuration.GenreMappings);
         }
@@ -47,9 +59,29 @@ namespace MediaBrowser.Plugins.MediaPortal.Helpers
                     _movieGenres.AddRange(_configuration.GenreMappings[GENRE_MOVIE]);
                 }
 
+                if (_configuration.GenreMappings.ContainsKey(GENRE_SERIES) && _configuration.GenreMappings[GENRE_SERIES] != null)
+                {
+                    _seriesGenres.AddRange(_configuration.GenreMappings[GENRE_SERIES]);
+                }
+
                 if (_configuration.GenreMappings.ContainsKey(GENRE_SPORT) && _configuration.GenreMappings[GENRE_SPORT] != null)
                 {
                     _sportGenres.AddRange(_configuration.GenreMappings[GENRE_SPORT]);
+                }
+
+                if (_configuration.GenreMappings.ContainsKey(GENRE_NEWS) && _configuration.GenreMappings[GENRE_NEWS] != null)
+                {
+                    _newsGenres.AddRange(_configuration.GenreMappings[GENRE_NEWS]);
+                }
+
+                if (_configuration.GenreMappings.ContainsKey(GENRE_KIDS) && _configuration.GenreMappings[GENRE_KIDS] != null)
+                {
+                    _kidsGenres.AddRange(_configuration.GenreMappings[GENRE_KIDS]);
+                }
+
+                if (_configuration.GenreMappings.ContainsKey(GENRE_LIVE) && _configuration.GenreMappings[GENRE_LIVE] != null)
+                {
+                    _liveGenres.AddRange(_configuration.GenreMappings[GENRE_LIVE]);
                 }
             }
         }
@@ -64,7 +96,17 @@ namespace MediaBrowser.Plugins.MediaPortal.Helpers
             if (program != null && program.Genres != null && program.Genres.Count > 0)
             {
                 program.IsMovie = _movieGenres.Any(g => program.Genres.Contains(g, StringComparer.InvariantCultureIgnoreCase));
+                program.IsSeries = _seriesGenres.Any(g => program.Genres.Contains(g, StringComparer.InvariantCultureIgnoreCase));
+                if (_seriesGenres.All(g => string.IsNullOrWhiteSpace(g)))
+                {
+                    program.IsSeries = true;
+                    program.IsPremiere = false;
+                    program.IsRepeat = true;
+                }
                 program.IsSports = _sportGenres.Any(g => program.Genres.Contains(g, StringComparer.InvariantCultureIgnoreCase));
+                program.IsNews = _newsGenres.Any(g => program.Genres.Contains(g, StringComparer.InvariantCultureIgnoreCase));
+                program.IsKids = _kidsGenres.Any(g => program.Genres.Contains(g, StringComparer.InvariantCultureIgnoreCase));
+                program.IsLive = _liveGenres.Any(g => program.Genres.Contains(g, StringComparer.InvariantCultureIgnoreCase));
             }
         }
     }
