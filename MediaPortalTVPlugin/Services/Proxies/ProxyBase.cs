@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 
@@ -71,6 +72,10 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Proxies
         /// <returns></returns>
         protected String GetUrl(String endPointSuffixOverride, String action, params object[] args)
         {
+            if (string.Equals(Configuration.ApiHostName, "localhost", StringComparison.CurrentCultureIgnoreCase) || Configuration.ApiHostName == "127.0.0.1")
+            {
+                Configuration.ApiHostName = LocalIPAddress().ToString();
+            }
             var baseUrl = String.Format("http://{0}:{1}/MPExtended/{2}/", Configuration.ApiHostName, Configuration.ApiPortNumber, endPointSuffixOverride);
             return String.Concat(baseUrl, String.Format(action, args));
         }
@@ -140,6 +145,18 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Proxies
             var request = CreateRequest(action, args);
             request.CancellationToken = cancellationToken;
             return request;
+        }
+
+        private IPAddress LocalIPAddress()
+        {
+            if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
+            {
+                return null;
+            }
+
+            IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
+
+            return host.AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
         }
     }
 }

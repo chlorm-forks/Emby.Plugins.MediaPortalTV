@@ -19,9 +19,11 @@ namespace MediaBrowser.Plugins.MediaPortal.Configuration
             ApiHostName = "localhost";
             ApiPortNumber = 4322;
             StreamingProfileName = "Direct";
-            PreviewThumbnailOffsetMinutes = 5;
+            PreviewThumbnailOffsetMinutes = 10;
+            StreamDelay = 0;
+            EnableTimerCache = true;
 
-            // Initialise this, so we can guarantee that we al
+            // Initialise this
             GenreMappings = new SerializableDictionary<string, List<string>>();
         }
 
@@ -49,7 +51,37 @@ namespace MediaBrowser.Plugins.MediaPortal.Configuration
         /// The password for authenticating with MPExtended
         /// </summary>
         public string Password { get; set; }
-        
+
+        /// <summary>
+        /// The default channel group to use in MB
+        /// </summary>
+        public Int32 DefaultChannelGroup { get; set; }
+
+        /// <summary>
+        /// The genre mappings, to map localised MP genres, to MB genres.
+        /// </summary>
+        public SerializableDictionary<String, List<String>> GenreMappings { get; set; }
+
+        /// <summary>
+        /// The default ordering of channels
+        /// </summary>
+        public ChannelSorting DefaultChannelSortOrder { get; set; }
+
+        /// <summary>
+        /// Enable channel index
+        /// </summary>
+        public bool ChannelByIndex { get; set; }
+
+        /// <summary>
+        /// The name of the MPExtended profile to use for streaming
+        /// </summary>
+        public String StreamingProfileName { get; set; }
+
+        /// <summary>
+        /// Delay reading of the stream in ms
+        /// </summary>
+        public Int32? StreamDelay { get; set; }
+
         /// <summary>
         /// Enable direct access to recordings
         /// </summary>
@@ -76,24 +108,14 @@ namespace MediaBrowser.Plugins.MediaPortal.Configuration
         public Int32 PreviewThumbnailOffsetMinutes { get; set; }
 
         /// <summary>
-        /// The name of the MPExtended profile to use for streaming
+        /// Enable one time schedules caching
         /// </summary>
-        public String StreamingProfileName { get; set; }
+        public bool EnableTimerCache { get; set; }
 
         /// <summary>
-        /// The default channel group to use in MB
+        /// Enable additional logging
         /// </summary>
-        public Int32 DefaultChannelGroup { get; set; }
-
-        /// <summary>
-        /// The genre mappings, to map localised MP genres, to MB genres.
-        /// </summary>
-        public SerializableDictionary<String, List<String>> GenreMappings { get; set; }
-
-        /// <summary>
-        /// The default ordering of channels
-        /// </summary>
-        public ChannelSorting DefaultChannelSortOrder { get; set; }
+        public bool EnableLogging { get; set; }
 
         /// <summary>
         /// Validates the configuration
@@ -124,8 +146,10 @@ namespace MediaBrowser.Plugins.MediaPortal.Configuration
                 }
             }
 
-            if (EnableDirectAccess)
-            { }
+            if (!StreamDelay.HasValue)
+            {
+                StreamDelay = 0;
+            }
 
             if (RequiresPathSubstitution)
             {

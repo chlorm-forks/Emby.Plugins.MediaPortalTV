@@ -7,9 +7,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("MediaBrowser.Plugins.MediaPortal")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Media Browser Team")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("MediaBrowser.Plugins.MediaPortal")]
-[assembly: AssemblyCopyright("Copyright © Media Browser Team 2014")]
+[assembly: AssemblyCopyright("Copyright © https://github.com/puenktchen 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -30,7 +30,7 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("1.3.3.555")]
+[assembly: AssemblyVersion("1.5.0.000")]
 
 //// BUild type
 //#if DEBUG

@@ -94,7 +94,7 @@ namespace MediaBrowser.Plugins.MediaPortal.Helpers
             /// if we get here, then the user specified options that are not supported by MP
             else
             {
-                return WebScheduleType.Once;
+                return WebScheduleType.EveryTimeOnThisChannel;
             }
         }
 
@@ -125,6 +125,19 @@ namespace MediaBrowser.Plugins.MediaPortal.Helpers
         public static Int64 RoundUpMinutes(this TimeSpan time)
         {
             return (Int64)time.RoundUp(TimeSpan.FromMinutes(1)).TotalMinutes;
+        }
+
+        public static IEnumerable<TSource> DistinctBy<TSource, TKey>
+            (this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+        {
+            HashSet<TKey> seenKeys = new HashSet<TKey>();
+            foreach (TSource element in source)
+            {
+                if (seenKeys.Add(keySelector(element)))
+                {
+                    yield return element;
+                }
+            }
         }
     }
 }

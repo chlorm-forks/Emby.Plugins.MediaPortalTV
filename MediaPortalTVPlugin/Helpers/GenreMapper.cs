@@ -108,6 +108,13 @@ namespace MediaBrowser.Plugins.MediaPortal.Helpers
                 program.IsKids = _kidsGenres.Any(g => program.Genres.Contains(g, StringComparer.InvariantCultureIgnoreCase));
                 program.IsLive = _liveGenres.Any(g => program.Genres.Contains(g, StringComparer.InvariantCultureIgnoreCase));
             }
+
+            if (program != null && program.Genres == null)
+            {
+                program.IsSeries = true;
+                program.IsPremiere = false;
+                program.IsRepeat = true;
+            }
         }
     }
 }

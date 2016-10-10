@@ -77,7 +77,7 @@ namespace MediaBrowser.Plugins.MediaPortal
             var options = new List<ChannelSortOption>() 
             {
                 new ChannelSortOption() { Id = ChannelSorting.Default.ToString(), Description = "Default" }, 
-                new ChannelSortOption() { Id = ChannelSorting.ChannelNumber.ToString(), Description = "Channel Number" }, 
+                new ChannelSortOption() { Id = ChannelSorting.ChannelId.ToString(), Description = "Channel Id" }, 
                 new ChannelSortOption() { Id = ChannelSorting.ChannelName.ToString(), Description = "Channel Name" }, 
             };
 

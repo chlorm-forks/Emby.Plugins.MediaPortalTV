@@ -14,7 +14,7 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Entities
         public string EpisodePart { get; set; }
         public string FileName { get; set; }
         public string Genre { get; set; }
-        public int Id { get; set; }
+        public string Id { get; set; }
         public bool IsChanged { get; set; }
         public bool IsManual { get; set; }
         public bool IsRecording { get; set; }

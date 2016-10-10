@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+
 using MediaBrowser.Model.Logging;
 using MediaBrowser.Plugins.MediaPortal.Interfaces;
 
@@ -54,7 +55,15 @@ namespace MediaBrowser.Plugins.MediaPortal.Helpers
 
         public void Info(string message, params object[] paramList)
         {
-            _logger.Info("[MP TV Plugin] - {0}", String.Format(message, paramList));
+            if (Plugin.Instance.Configuration.EnableLogging)
+            {
+                _logger.Info("[MP TV Plugin] - {0}", String.Format(message, paramList));
+            }
+            else
+            {
+                _logger.Debug("[MP TV Plugin] - {0}", String.Format(message, paramList));
+            }
+            
         }
 
         public void Log(LogSeverity severity, string message, params object[] paramList)

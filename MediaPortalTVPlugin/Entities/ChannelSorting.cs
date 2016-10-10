@@ -10,6 +10,6 @@ namespace MediaBrowser.Plugins.MediaPortal.Entities
     {
         Default = 0,
         ChannelName = 1,
-        ChannelNumber = 2
+        ChannelId = 2
     }
 }

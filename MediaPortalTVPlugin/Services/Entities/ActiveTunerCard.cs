@@ -39,7 +39,7 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Entities
         public string TimeShiftFileName { get; set; }
         public object TimeShiftFolder { get; set; }
         public DateTime TimeShiftStarted { get; set; }
-        public int Type { get; set; }
+        public WebCardType Type { get; set; }
         public User User { get; set; }
     }
 }

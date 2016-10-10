@@ -27,6 +27,7 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Entities
         public bool IsRecordingOncePending { get; set; }
         public bool IsRecordingSeries { get; set; }
         public bool IsRecordingSeriesPending { get; set; }
+        public bool IsRecordingSeriesCanceled { get; set; }
         public bool Notify { get; set; }
         public DateTime OriginalAirDate { get; set; }
         public int ParentalRating { get; set; }
