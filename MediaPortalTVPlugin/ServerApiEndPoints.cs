@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading;
 
 using MediaBrowser.Controller.Net;
+using MediaBrowser.Model.Services;
 using MediaBrowser.Plugins.MediaPortal.Services.Entities;
 using MediaBrowser.Plugins.MediaPortal.Services.Exceptions;
 
-using ServiceStack;
 using MediaBrowser.Plugins.MediaPortal.Entities;
 
 namespace MediaBrowser.Plugins.MediaPortal
@@ -32,7 +32,7 @@ namespace MediaBrowser.Plugins.MediaPortal
     {
     }
 
-    public class ServerApiEndpoints : IRestfulService
+    public class ServerApiEndpoints : IService
     {
         public object Get(GetProfiles request)
         {
