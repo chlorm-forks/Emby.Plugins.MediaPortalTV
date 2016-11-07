@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MediaBrowser.Plugins.MediaPortal.Services.Entities
 {
@@ -31,7 +27,7 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Entities
         public string RecordingFileName { get; set; }
         public string RecordingFolder { get; set; }
         public int RecordingFormat { get; set; }
-        public int RecordingScheduleId { get; set; }
+        public string RecordingScheduleId { get; set; }
         public DateTime RecordingStarted { get; set; }
         public string RemoteServer { get; set; }
         public int SignalLevel { get; set; }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Common.Net;
 using MediaBrowser.Common.Plugins;
@@ -52,7 +53,7 @@ namespace MediaBrowser.Plugins.MediaPortal
         /// <value>The name.</value>
         public override string Name
         {
-            get { return "Media Portal TV Plugin"; }
+            get { return "MediaPortal TV Plugin"; }
         }
 
         /// <summary>
@@ -63,7 +64,7 @@ namespace MediaBrowser.Plugins.MediaPortal
         {
             get
             {
-                return "Media Portal TV Plugin to enable Live TV streaming and scheduling.";
+                return "MediaPortal TV Plugin to enable Live TV streaming and scheduling.";
             }
         }
 
@@ -92,15 +93,15 @@ namespace MediaBrowser.Plugins.MediaPortal
         }
 
         public IEnumerable<PluginPageInfo> GetPages()
-        {
-            return new[]
-            {
-                new PluginPageInfo
-                {
-                    Name = "mediaportal",
-                    EmbeddedResourcePath = "MediaBrowser.Plugins.MediaPortal.Configuration.configPage.html"
-                }
-            };
-        }
+        {  
+            return new[]  
+            {  
+                new PluginPageInfo  
+                {  
+                    Name = "MediaPortal",  
+                    EmbeddedResourcePath = "MediaBrowser.Plugins.MediaPortal.Configuration.configPage.html"  
+                }  
+            };  
+        }  
     }
 }
