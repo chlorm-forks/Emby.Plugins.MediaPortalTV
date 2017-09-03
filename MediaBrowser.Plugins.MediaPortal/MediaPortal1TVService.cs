@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Caching;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -189,27 +188,30 @@ namespace MediaBrowser.Plugins.MediaPortal
             });
         }
 
+        private object _timerLock = new object();
+        private List<TimerInfo> _timerCache = null;
+        private DateTime _timerExpirationTime;
+
         public Task<IEnumerable<TimerInfo>> GetTimersAsync(CancellationToken cancellationToken)
         {
-            var timerCache = MemoryCache.Default;
-
-            if (refreshTimers)
+            lock (_timerLock)
             {
-                timerCache.Remove("timers");
-                refreshTimers = false;
+                if (refreshTimers)
+                {
+                    _timerCache = null;
+                    refreshTimers = false;
+                }
+
+                if (_timerCache == null || _timerExpirationTime >= DateTime.UtcNow)
+                {
+                    Plugin.Logger.Info("Add timers to memory cache");
+                    _timerExpirationTime = (Plugin.Instance.Configuration.EnableTimerCache) ? DateTime.UtcNow.AddHours(24) : DateTime.UtcNow.AddSeconds(20);
+                    _timerCache = Plugin.TvProxy.GetSchedules(cancellationToken).ToList();
+                }
+
+                Plugin.Logger.Info("Return timers from memory cache");
+                return Task.FromResult<IEnumerable<TimerInfo>>(_timerCache);
             }
-
-            if (!timerCache.Contains("timers"))
-            {
-                Plugin.Logger.Info("Add timers to memory cache");
-                var expiration = (Plugin.Instance.Configuration.EnableTimerCache) ? DateTimeOffset.UtcNow.AddHours(24) : DateTimeOffset.UtcNow.AddSeconds(20);
-                var results = Plugin.TvProxy.GetSchedules(cancellationToken);
-
-                timerCache.Add("timers", Task.FromResult(results), expiration);
-            }
-
-            Plugin.Logger.Info("Return timers from memory cache");
-            return (Task<IEnumerable<TimerInfo>>)timerCache.Get("timers", null);
         }
 
         public Task CreateTimerAsync(TimerInfo info, CancellationToken cancellationToken)
@@ -233,27 +235,30 @@ namespace MediaBrowser.Plugins.MediaPortal
             return Task.Delay(0, cancellationToken);
         }
 
+        private object _seriesTimerLock = new object();
+        private List<SeriesTimerInfo> _seriesTimerCache = null;
+        private DateTime _seriesTimerExpirationTime;
+
         public Task<IEnumerable<SeriesTimerInfo>> GetSeriesTimersAsync(CancellationToken cancellationToken)
         {
-            var seriestimerCache = MemoryCache.Default;
-
-            if (refreshTimers)
+            lock (_seriesTimerLock)
             {
-                seriestimerCache.Remove("seriestimers");
-                refreshTimers = false;
+                if (refreshTimers)
+                {
+                    _seriesTimerCache = null;
+                    refreshTimers = false;
+                }
+
+                if (_seriesTimerCache == null || _seriesTimerExpirationTime >= DateTime.UtcNow)
+                {
+                    Plugin.Logger.Info("Add series timers to memory cache");
+                    _seriesTimerExpirationTime = (Plugin.Instance.Configuration.EnableTimerCache) ? DateTime.UtcNow.AddHours(24) : DateTime.UtcNow.AddSeconds(20);
+                    _seriesTimerCache = Plugin.TvProxy.GetSeriesSchedules(cancellationToken).ToList();
+                }
+
+                Plugin.Logger.Info("Return series timers from memory cache");
+                return Task.FromResult<IEnumerable<SeriesTimerInfo>>(_seriesTimerCache);
             }
-
-            if (!seriestimerCache.Contains("seriestimers"))
-            {
-                Plugin.Logger.Info("Add series timers to memory cache");
-                var expiration = (Plugin.Instance.Configuration.EnableTimerCache) ? DateTimeOffset.UtcNow.AddHours(24) : DateTimeOffset.UtcNow.AddSeconds(20);
-                var results = Plugin.TvProxy.GetSeriesSchedules(cancellationToken);
-
-                seriestimerCache.Add("seriestimers", Task.FromResult(results), expiration);
-            }
-
-            Plugin.Logger.Info("Return series timers from memory cache");
-            return (Task<IEnumerable<SeriesTimerInfo>>)seriestimerCache.Get("seriestimers", null);
         }
 
         public Task CreateSeriesTimerAsync(SeriesTimerInfo info, CancellationToken cancellationToken)

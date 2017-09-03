@@ -6,8 +6,6 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
-using System.Web;
-
 using MediaBrowser.Common.Net;
 using MediaBrowser.Model.Dto;
 using MediaBrowser.Model.MediaInfo;
@@ -135,8 +133,8 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Proxies
             Plugin.Logger.Info("Streaming setting StreamDelay: {0}", Configuration.StreamDelay);
             Plugin.Logger.Info("Streaming Media Type: {0}; Streaming item ID: {1}", webMediaType, itemId);
 
-            var identifier = HttpUtility.UrlEncode(String.Format("{0}-{1}-{2:yyyyMMddHHmmss}", webMediaType, itemId, DateTime.UtcNow));
-            var profile = HttpUtility.UrlEncode(GetTranscoderProfile(cancellationToken, Configuration.StreamingProfileName).Name);
+            var identifier = WebUtility.UrlEncode(String.Format("{0}-{1}-{2:yyyyMMddHHmmss}", webMediaType, itemId, DateTime.UtcNow));
+            var profile = WebUtility.UrlEncode(GetTranscoderProfile(cancellationToken, Configuration.StreamingProfileName).Name);
 
             var streamingDetails = new StreamingDetails()
             {

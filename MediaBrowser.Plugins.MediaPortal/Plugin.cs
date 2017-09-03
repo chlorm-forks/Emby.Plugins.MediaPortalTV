@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Common.Net;
@@ -66,6 +67,12 @@ namespace MediaBrowser.Plugins.MediaPortal
             {
                 return "MediaPortal TV Plugin to enable Live TV streaming and scheduling.";
             }
+        }
+
+        private Guid _id = new Guid("2c6a0219-7621-4b06-8a64-da3f7038b649");
+        public override Guid Id
+        {
+            get { return _id; }
         }
 
         /// <summary>
