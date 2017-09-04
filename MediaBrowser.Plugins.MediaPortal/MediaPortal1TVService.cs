@@ -202,7 +202,7 @@ namespace MediaBrowser.Plugins.MediaPortal
                     refreshTimers = false;
                 }
 
-                if (_timerCache == null || _timerExpirationTime >= DateTime.UtcNow)
+                if (_timerCache == null || _timerExpirationTime <= DateTime.UtcNow)
                 {
                     Plugin.Logger.Info("Add timers to memory cache");
                     _timerExpirationTime = (Plugin.Instance.Configuration.EnableTimerCache) ? DateTime.UtcNow.AddHours(24) : DateTime.UtcNow.AddSeconds(20);
@@ -249,7 +249,7 @@ namespace MediaBrowser.Plugins.MediaPortal
                     refreshTimers = false;
                 }
 
-                if (_seriesTimerCache == null || _seriesTimerExpirationTime >= DateTime.UtcNow)
+                if (_seriesTimerCache == null || _seriesTimerExpirationTime <= DateTime.UtcNow)
                 {
                     Plugin.Logger.Info("Add series timers to memory cache");
                     _seriesTimerExpirationTime = (Plugin.Instance.Configuration.EnableTimerCache) ? DateTime.UtcNow.AddHours(24) : DateTime.UtcNow.AddSeconds(20);
