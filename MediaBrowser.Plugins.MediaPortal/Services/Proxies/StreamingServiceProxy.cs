@@ -245,9 +245,9 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Proxies
 
                 if (Configuration.EnableImageProcessing)
                 {
-                    ImageHelper.CreateLandscapeImage(localImagePath, localLandscapePath);
-                    ImageHelper.CreatePosterImage(localImagePath, localPosterPath);
-                    ImageHelper.CreateLogoImage(localImagePath, localLogoPath);
+                    //ImageHelper.CreateLandscapeImage(localImagePath, localLandscapePath);
+                    //ImageHelper.CreatePosterImage(localImagePath, localPosterPath);
+                    //ImageHelper.CreateLogoImage(localImagePath, localLogoPath);
 
                     return localLogoPath;
                 }
