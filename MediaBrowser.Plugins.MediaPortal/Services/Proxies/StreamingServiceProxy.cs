@@ -243,11 +243,11 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Proxies
                     return null;
                 }
 
-                if (Configuration.EnableImageProcessing)
+                if (Configuration.EnableImageProcessing && Type.GetType("Mono.Runtime") == null)
                 {
-                    //ImageHelper.CreateLandscapeImage(localImagePath, localLandscapePath);
-                    //ImageHelper.CreatePosterImage(localImagePath, localPosterPath);
-                    //ImageHelper.CreateLogoImage(localImagePath, localLogoPath);
+                    ImageHelper.CreateLandscapeImage(localImagePath, localLandscapePath);
+                    ImageHelper.CreatePosterImage(localImagePath, localPosterPath);
+                    ImageHelper.CreateLogoImage(localImagePath, localLogoPath);
 
                     return localLogoPath;
                 }
