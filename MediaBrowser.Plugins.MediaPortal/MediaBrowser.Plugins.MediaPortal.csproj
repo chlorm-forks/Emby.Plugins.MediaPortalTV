@@ -16,6 +16,7 @@
     <None Remove="Images\Other Shows-thumb.png" />
     <None Remove="Images\Sports-thumb.png" />
     <None Remove="Images\TV Shows-thumb.png" />
+    <None Remove="thumb.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,6 +29,7 @@
     <EmbeddedResource Include="Images\Other Shows-thumb.png" />
     <EmbeddedResource Include="Images\Sports-thumb.png" />
     <EmbeddedResource Include="Images\TV Shows-thumb.png" />
+    <EmbeddedResource Include="thumb.png" />
   </ItemGroup>
 
   <ItemGroup>
