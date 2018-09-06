@@ -73,8 +73,8 @@ namespace MediaBrowser.Plugins.MediaPortal.Helpers
                 cancellationToken,
                 "GetProgramsDetailedForGroup?groupId={0}&startTime={1}&endTime={2}",
                 Configuration.TvChannelGroup,
-                DateTime.Now.ToLocalTime().ToUrlDate(),
-                DateTime.Now.ToLocalTime().AddHours(25).ToUrlDate());
+                DateTimeOffset.Now.ToLocalTime().ToUrlDate(),
+                DateTimeOffset.Now.ToLocalTime().AddHours(25).ToUrlDate());
 
             foreach (var program in programs.SelectMany(x => x.Programs))
             {

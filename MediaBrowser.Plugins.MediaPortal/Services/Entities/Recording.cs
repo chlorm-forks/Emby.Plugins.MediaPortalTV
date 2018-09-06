@@ -52,7 +52,7 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Entities
         public bool IsManual { get; set; }
         public bool IsRecording { get; set; }
         public int KeepUntil { get; set; }
-        public DateTime KeepUntilDate { get; set; }
+        public DateTimeOffset KeepUntilDate { get; set; }
 
         public string MovieName
         {
@@ -86,7 +86,7 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Entities
         }
 
         public bool ShouldBeDeleted { get; set; }
-        public DateTime StartTime { get; set; }
+        public DateTimeOffset StartTime { get; set; }
         public int StopTime { get; set; }
         public int TimesWatched { get; set; }
 

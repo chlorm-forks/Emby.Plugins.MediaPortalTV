@@ -5,15 +5,15 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Entities
     public class Schedule
     {
         public int BitRateMode { get; set; }
-        public DateTime Canceled { get; set; }
+        public DateTimeOffset Canceled { get; set; }
         public int ChannelId { get; set; }
         public string Directory { get; set; }
         public bool DoesUseEpisodeManagement { get; set; }
-        public DateTime EndTime { get; set; }
+        public DateTimeOffset EndTime { get; set; }
         public int Id { get; set; }
         public bool IsChanged { get; set; }
         public bool IsManual { get; set; }
-        public DateTime KeepDate { get; set; }
+        public DateTimeOffset KeepDate { get; set; }
         public int KeepMethod { get; set; }
         public long MaxAirings { get; set; }
         public int ParentScheduleId { get; set; }
@@ -25,7 +25,7 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Entities
         public int RecommendedCard { get; set; }
         public int ScheduleType { get; set; }
         public bool Series { get; set; }
-        public DateTime StartTime { get; set; }
+        public DateTimeOffset StartTime { get; set; }
         public string Title { get; set; }
     }
 }

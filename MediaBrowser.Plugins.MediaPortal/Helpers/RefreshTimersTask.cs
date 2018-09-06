@@ -90,7 +90,7 @@ namespace MediaBrowser.Plugins.MediaPortal.Helpers
 
                 if (Plugin.Instance.Configuration.SkipAlreadyInLibraryProfile == "Season and Episode Numbers" && timer.EpisodeNumber.HasValue && timer.SeasonNumber.HasValue)
                 {
-                    var seriesIds = _libraryManager.GetItemIds(new InternalItemsQuery
+                    var seriesIds = _libraryManager.GetInternalItemIds(new InternalItemsQuery
                     {
                         IncludeItemTypes = new[] { typeof(Series).Name },
                         Name = seriesName
@@ -120,7 +120,7 @@ namespace MediaBrowser.Plugins.MediaPortal.Helpers
 
                 if (Plugin.Instance.Configuration.SkipAlreadyInLibraryProfile == "Episode Name" && !string.IsNullOrWhiteSpace(timer.EpisodeTitle))
                 {
-                    var seriesIds = _libraryManager.GetItemIds(new InternalItemsQuery
+                    var seriesIds = _libraryManager.GetInternalItemIds(new InternalItemsQuery
                     {
                         IncludeItemTypes = new[] { typeof(Series).Name },
                         NameContains = seriesName

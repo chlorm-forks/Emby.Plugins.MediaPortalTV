@@ -8,10 +8,10 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Entities
         public int ChannelId { get; set; }
         public string Description { get; set; }
         public int DurationInMinutes { get; set; }
-        public DateTime EndTime { get; set; }
+        public DateTimeOffset EndTime { get; set; }
         public int Id { get; set; }
         public bool IsScheduled { get; set; }
-        public DateTime StartTime { get; set; }
+        public DateTimeOffset StartTime { get; set; }
         public string Title { get; set; }
         public string Classification { get; set; }
 
@@ -62,7 +62,7 @@ namespace MediaBrowser.Plugins.MediaPortal.Services.Entities
         public bool IsRecordingSeriesPending { get; set; }
         public bool IsRecordingSeriesCanceled { get; set; }
         public bool Notify { get; set; }
-        public DateTime OriginalAirDate { get; set; }
+        public DateTimeOffset OriginalAirDate { get; set; }
         public int ParentalRating { get; set; }
 
         public int? ProductionYear
