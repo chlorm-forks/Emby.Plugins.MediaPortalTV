@@ -81,7 +81,7 @@ namespace MediaBrowser.Plugins.MediaPortal.Helpers
                 if (!String.IsNullOrEmpty(program.Title))
                 {
                     foreach (var episode in missingEpisodes.Where(x =>
-                    x.Parent.Parent.Name.Contains(Regex.Replace(program.Title, @"\s\W[a-zA-Z]?[0-9]{1,3}?\W$", String.Empty)) &&
+                    x.Parent.Parent.Name.StartsWith(Regex.Replace(program.Title, @"\s\W[a-zA-Z]?[0-9]{1,3}?\W$", String.Empty)) &&
                     x.IndexNumber.Equals(program.EpisodeNumber) &&
                     x.ParentIndexNumber.Equals(program.SeasonNumber)))
                     {
