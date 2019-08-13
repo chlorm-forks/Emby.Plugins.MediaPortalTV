@@ -198,8 +198,10 @@
                             </div>
                             <label class="checkboxContainer">
                                 <input is="emby-checkbox" type="checkbox" id="chkAutoCreateTimers" />
-                                <span>Autocreates timers for episodes missing from Emby's library <a href="scheduledtasks.html" id="saveAndLeave">(Click me)</a>
-                                <br />(For this to take affect, you have to enable download of missing episodes in your tv show libraries)</span>
+                                <span>
+                                    Autocreates timers for episodes missing from Emby's library <a href="scheduledtasks.html" id="saveAndLeave">(Click me)</a>
+                                    <br />(For this to take affect, you have to enable download of missing episodes in your tv show libraries)
+                                </span>
                             </label>
                         </div>
                     </div>
@@ -208,9 +210,11 @@
                         <div class="collapseContent">
                             <label class="checkboxContainer">
                                 <input is="emby-checkbox" type="checkbox" id="chkEnableImageProcessing" />
-                                <span>Enable custom image processing
-                                <br />(Works best with transparent images that have the actual logo size)
-                                <br />No functionality under .MONO installation like for Synology or some other linux distributions!</span>
+                                <span>
+                                    Enable custom image processing
+                                    <br />(Works best with transparent images that have the actual logo size)
+                                    <br />No functionality under .MONO installation like for Synology or some other linux distributions!
+                                </span>
                             </label>
                             <label class="checkboxContainer">
                                 <input is="emby-checkbox" type="checkbox" id="chkEnableLogging" />
@@ -292,11 +296,11 @@
                 var page = this;
 
                 $("#saveAndTest", page).click(function () {
-                    saveConfiguration($('.mediaPortalConfigurationPage'));
+                    saveConfiguration(page);
                 });
 
                 $("#saveAndLeave", page).click(function () {
-                    saveConfiguration($('.mediaPortalConfigurationPage'));
+                    saveConfiguration(page);
                 });
 
                 $('form', page).on('submit', function (e) {
@@ -318,27 +322,27 @@
 
                     $('#txtApiHostName', page).val(config.ApiHostName);
                     $('#txtApiPortNumber', page).val(config.ApiPortNumber);
-                    $('#chkRequiresAuthentication', page).checked(config.RequiresAuthentication || false).checkboxradio("refresh");
+                    page.querySelector('#chkRequiresAuthentication').checked = config.RequiresAuthentication || false;
                     $('#txtUserName', page).val(config.UserName);
                     $('#txtPassword', page).val(config.Password);
-                    $('#chkProgramImages', page).checked(config.ProgramImages || false).checkboxradio("refresh");
-                    $('#chkEnableProbing', page).checked(config.EnableProbing || false).checkboxradio("refresh");
-                    $('#chkRtspStreaming', page).checked(config.RtspStreaming || false).checkboxradio("refresh");
+                    page.querySelector('#chkProgramImages').checked = config.ProgramImages || false;
+                    page.querySelector('#chkEnableProbing').checked = config.EnableProbing || false;
+                    page.querySelector('#chkRtspStreaming').checked = config.RtspStreaming || false;
                     $('#txtStreamDelay', page).val(config.StreamDelay);
-                    $('#chkEnableRecordingImport', page).checked(config.EnableRecordingImport || false).checkboxradio("refresh");
-                    $('#chkEnableTmdbLookup', page).checked(config.EnableTmdbLookup || false).checkboxradio("refresh");
-                    $('#chkEnableDirectAccess', page).checked(config.EnableDirectAccess || false).checkboxradio("refresh");
-                    $('#chkRequiresPathSubstitution', page).checked(config.RequiresPathSubstitution || false).checkboxradio("refresh");
+                    page.querySelector('#chkEnableRecordingImport').checked = config.EnableRecordingImport || false;
+                    page.querySelector('#chkEnableTmdbLookup').checked = config.EnableTmdbLookup || false;
+                    page.querySelector('#chkEnableDirectAccess').checked = config.EnableDirectAccess || false;
+                    page.querySelector('#chkRequiresPathSubstitution').checked = config.RequiresPathSubstitution || false;
                     $('#txtLocalFilePath', page).val(config.LocalFilePath);
                     $('#txtRemoteFilePath', page).val(config.RemoteFilePath);
                     $('#txtThumbnailOffset', page).val(config.PreviewThumbnailOffsetMinutes);
-                    $('#chkEveryTimeOnThisChannel', page).checked(config.EveryTimeOnThisChannel || false).checkboxradio("refresh");
-                    $('#chkEveryTimeOnEveryChannel', page).checked(config.EveryTimeOnEveryChannel || false).checkboxradio("refresh");
-                    $('#chkWeeklyEveryTimeOnThisChannel', page).checked(config.WeeklyEveryTimeOnThisChannel || false).checkboxradio("refresh");
-                    $('#chkSkipAlreadyInLibrary', page).checked(config.SkipAlreadyInLibrary || false).checkboxradio("refresh");
-                    $('#chkAutoCreateTimers', page).checked(config.AutoCreateTimers || false).checkboxradio("refresh");
-                    $('#chkEnableImageProcessing', page).checked(config.EnableImageProcessing || false).checkboxradio("refresh");
-                    $('#chkEnableLogging', page).checked(config.EnableLogging || false).checkboxradio("refresh");
+                    page.querySelector('#chkEveryTimeOnThisChannel').checked = config.EveryTimeOnThisChannel || false;
+                    page.querySelector('#chkEveryTimeOnEveryChannel').checked = config.EveryTimeOnEveryChannel || false;
+                    page.querySelector('#chkWeeklyEveryTimeOnThisChannel').checked = config.WeeklyEveryTimeOnThisChannel || false;
+                    page.querySelector('#chkSkipAlreadyInLibrary').checked = config.SkipAlreadyInLibrary || false;
+                    page.querySelector('#chkAutoCreateTimers').checked = config.AutoCreateTimers || false;
+                    page.querySelector('#chkEnableImageProcessing').checked = config.EnableImageProcessing || false;
+                    page.querySelector('#chkEnableLogging').checked = config.EnableLogging || false;
 
                     checkRequiresAuthentication();
 
@@ -434,31 +438,31 @@
 
                     config.ApiHostName = $('#txtApiHostName', form).val();
                     config.ApiPortNumber = $('#txtApiPortNumber', form).val();
-                    config.RequiresAuthentication = $('#chkRequiresAuthentication', form).checked();
+                    config.RequiresAuthentication = form.querySelector('#chkRequiresAuthentication').checked;
                     config.UserName = $('#txtUserName', form).val();
                     config.Password = $('#txtPassword', form).val();
                     config.TvChannelGroup = $('#selectTvChannelGroup', form).val();
                     config.RadioChannelGroup = $('#selectRadioChannelGroup', form).val();
-                    config.ProgramImages = $('#chkProgramImages', form).checked();
-                    config.EnableProbing = $('#chkEnableProbing', form).checked();
-                    config.RtspStreaming = $('#chkRtspStreaming', form).checked();
+                    config.ProgramImages = form.querySelector('#chkProgramImages').checked;
+                    config.EnableProbing = form.querySelector('#chkEnableProbing').checked;
+                    config.RtspStreaming = form.querySelector('#chkRtspStreaming').checked;
                     config.StreamingProfileName = $('#selectProfile', form).val();
                     config.StreamDelay = $('#txtStreamDelay', form).val();
-                    config.EnableRecordingImport = $('#chkEnableRecordingImport', form).checked();
-                    config.EnableTmdbLookup = $('#chkEnableTmdbLookup', form).checked();
-                    config.EnableDirectAccess = $('#chkEnableDirectAccess', form).checked();
-                    config.RequiresPathSubstitution = $('#chkRequiresPathSubstitution', form).checked();
+                    config.EnableRecordingImport = form.querySelector('#chkEnableRecordingImport').checked;
+                    config.EnableTmdbLookup = form.querySelector('#chkEnableTmdbLookup').checked;
+                    config.EnableDirectAccess = form.querySelector('#chkEnableDirectAccess').checked;
+                    config.RequiresPathSubstitution = form.querySelector('#chkRequiresPathSubstitution').checked;
                     config.LocalFilePath = $('#txtLocalFilePath', form).val();
                     config.RemoteFilePath = $('#txtRemoteFilePath', form).val();
                     config.PreviewThumbnailOffsetMinutes = $('#txtThumbnailOffset', form).val();
-                    config.EveryTimeOnThisChannel = $('#chkEveryTimeOnThisChannel', form).checked();
-                    config.EveryTimeOnEveryChannel = $('#chkEveryTimeOnEveryChannel', form).checked();
-                    config.WeeklyEveryTimeOnThisChannel = $('#chkWeeklyEveryTimeOnThisChannel', form).checked();
-                    config.SkipAlreadyInLibrary = $('#chkSkipAlreadyInLibrary', form).checked();
-                    config.SkipAlreadyInLibraryProfile = $('#selectSkipAlreadyInLibraryProfile', form).val();
-                    config.AutoCreateTimers = $('#chkAutoCreateTimers', form).checked();
-                    config.EnableImageProcessing = $('#chkEnableImageProcessing', form).checked();
-                    config.EnableLogging = $('#chkEnableLogging', form).checked();
+                    config.EveryTimeOnThisChannel = form.querySelector('#chkEveryTimeOnThisChannel').checked;
+                    config.EveryTimeOnEveryChannel = form.querySelector('#chkEveryTimeOnEveryChannel').checked;
+                    config.WeeklyEveryTimeOnThisChannel = form.querySelector('#chkWeeklyEveryTimeOnThisChannel').checked;
+                    config.SkipAlreadyInLibrary = form.querySelector('#chkSkipAlreadyInLibrary').checked;
+                    config.SkipAlreadyInLibraryProfile = form.querySelector('#selectSkipAlreadyInLibraryProfile', form).val();
+                    config.AutoCreateTimers = form.querySelector('#chkAutoCreateTimers').checked;
+                    config.EnableImageProcessing = form.querySelector('#chkEnableImageProcessing').checked;
+                    config.EnableLogging = form.querySelector('#chkEnableLogging').checked;
 
                     // Copy over the genre mapping fields
                     config.GenreMappings = {
