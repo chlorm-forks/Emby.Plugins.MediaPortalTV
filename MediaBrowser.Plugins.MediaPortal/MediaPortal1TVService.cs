@@ -83,7 +83,7 @@ namespace MediaBrowser.Plugins.MediaPortal
         {
             var mediaSource = new MediaSourceInfo
             {
-                // this is dummy info and will be opened in GetChannelStream
+                // this is dummy info and will be opened in GetChannelStream, based on our setting of RequiresOpening=true
                 // just make sure that it is predictable and returns the same result each time
                 Path = "http://mp-direct/" + tunerChannel.Id.GetMD5().ToString("N"),
                 Protocol = MediaProtocol.Http,

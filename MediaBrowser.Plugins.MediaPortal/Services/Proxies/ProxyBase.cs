@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using MediaBrowser.Common.Net;
 using MediaBrowser.Model.Logging;
 using MediaBrowser.Model.Serialization;
-using MediaBrowser.Plugins.MediaPortal.Services.Exceptions;
 
 namespace MediaBrowser.Plugins.MediaPortal.Services.Proxies
 {
