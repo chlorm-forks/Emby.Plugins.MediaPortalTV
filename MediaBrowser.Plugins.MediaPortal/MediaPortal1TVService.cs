@@ -126,16 +126,13 @@ namespace MediaBrowser.Plugins.MediaPortal
 
         public Task CloseLiveStream(ILiveStream liveStream)
         {
-            // TODO: Need a way to get the TunerHostInfo object
+            var tuner = LiveTvManager.GetTunerHostInfo(liveStream.TunerHostId);
+            var config = GetProviderOptions<MediaPortalOptions>(tuner);
+            var liveStreamId = liveStream.OriginalStreamId;
 
-            return Task.CompletedTask;
-            //var tuner = liveStream.TunerHostId;
-            //var config = GetProviderOptions<MediaPortalOptions>(tuner);
-            //var liveStreamId = liveStream.OriginalStreamId;
+            var baseUrl = tuner.Url;
 
-            //var baseUrl = tuner.Url;
-
-            //return Plugin.StreamingProxy.CancelStream(baseUrl, config, CancellationToken.None, liveStreamId);
+            return Plugin.StreamingProxy.CancelStream(baseUrl, config, CancellationToken.None, liveStreamId);
         }
     }
 }
